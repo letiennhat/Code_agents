@@ -40,9 +40,11 @@ def input_refcode(numbers_phone, promotion_code, dic_data):
         if promotion_code!=dic_data[numbers_phone]['promotion_code']:
             k = dic_data[dict_promotion_phone[promotion_code]]['entered numbers']
             if k>=1 :
-                dic_data[dict_promotion_phone[promotion_code]]['entered numbers'] = int(k)-1
-                
-                dic_data = save_ref_code_in_data(numbers_phone,promotion_code,dic_data)
+                new_dic_data, key = save_ref_code_in_data(numbers_phone, promotion_code, dic_data)
+                if key:
+                    new_dic_data[dict_promotion_phone[promotion_code]]['entered numbers'] = int(k)-1
+                    
+                    return new_dic_data
             else:
                 warning("OVER NUMBERS INPUT, CHECK CODE AGAIN")
         else:
@@ -53,14 +55,18 @@ def input_refcode(numbers_phone, promotion_code, dic_data):
     return dic_data
 
 
-def save_ref_code_in_data(numbers_phone, promotion_code,dic_data):
+def save_ref_code_in_data(numbers_phone, promotion_code, dic_data):
     '''
         SAVE REF_CODE in DATA
     '''
 
-    dic_data[numbers_phone]['ref_code'] = str(promotion_code)
+    if dic_data[numbers_phone]['ref_code'] is None:
+        dic_data[numbers_phone]['ref_code'] = str(promotion_code)
+        warning("INPUT SUCCESSFULL")
+        return dic_data,1
 
-    return dic_data
+    warning("FAILED - YOUR REF-CODE EXISTS")
+    return dic_data,0
 
 def dict_data_output(numbers_phone,k=5):
     '''
@@ -117,4 +123,10 @@ def testting():
     x = input('promotion_code: ')
     new_nodes = input_refcode(n,x,node)
     print(f'new nodes :{new_nodes}')
+    n = input('phone: ')
+    x = input('promotion_code: ')
+    new_nodes_1 = input_refcode(n,x,new_nodes)
+    print(f'new nodes :{new_nodes_1}')
+
     return True
+testting()
