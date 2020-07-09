@@ -1,60 +1,120 @@
 import numpy as np
 from logging import warning
-import pprint
 
 out_list_promotion_code = []
-dict_phone_pro = {}
-def g_code(numbers_phone):
-    header_code=['PC']
+dict_promotion_phone = {} 
+'''
+    {
+        promotion_code : phone
+    }
+'''
+def generate_code(numbers_phone):
+    '''
+        Generate code following one number phone
+    '''
+
+    header_code = ['PC']
     tail_code = list('0123456789')
     global out_list_promotion_code
-    global dict_phone_pro
+    global dict_promotion_phone
     header_code.append(''.join(np.random.choice(tail_code,6)))
-    code_promotion = ''.join(header_code)
-    if code_promotion not in out_list_promotion_code:
-        out_list_promotion_code.append(code_promotion)
-        dict_phone_pro.update({code_promotion:numbers_phone})
-        return code_promotion
+    promotion_code = ''.join(header_code)
+    if promotion_code not in out_list_promotion_code:
+        out_list_promotion_code.append(promotion_code)
+        dict_promotion_phone.update({promotion_code:numbers_phone})
+
+        return promotion_code
     else:
-        return g_code(numbers_phone)
-def input_refcode(numbers_phone,promotion_code,dic_data):
-    global dict_phone_pro
-    if dic_data['promotion_code'] == dic_data[dict_phone_pro[promotion_code]][promotion_code]:
-        k = dic_data[dict_phone_pro[promotion_code]]['entered numbers']
-        dic_data[dict_phone_pro[promotion_code]]['entered numbers'] = int(k)-1 if int(k)>0 else warning("OVER NUMBERS INPUT, CHECK CODE AGAIN")
-        if k >= 1 :
-            return save_ref_code_in_data(numbers_phone,promotion_code,dic_data)
+
+        return generate_code(numbers_phone)
+
+
+def input_refcode(numbers_phone, promotion_code, dic_data):
+    '''
+        Enter REF-CODE - > SAVE in Data
+    '''
+
+    global dict_promotion_phone, out_list_promotion_code
+
+    if promotion_code in out_list_promotion_code:
+        if promotion_code!=dic_data[numbers_phone]['promotion_code']:
+            k = dic_data[dict_promotion_phone[promotion_code]]['entered numbers']
+            if k>=1 :
+                dic_data[dict_promotion_phone[promotion_code]]['entered numbers'] = int(k)-1
+                
+                dic_data = save_ref_code_in_data(numbers_phone,promotion_code,dic_data)
+            else:
+                warning("OVER NUMBERS INPUT, CHECK CODE AGAIN")
         else:
-            warning("OVER NUMBERS INPUT, CHECK CODE AGAIN")
+            warning("DO NOT ENTER YOUR CODE")
     else:
         warning("NO EXISTS")
 
-def save_ref_code_in_data(numbers_phone,promotion_code,dic_data):
-    if dict_phone_pro[promotion_code] == str(numbers_phone):
-        dic_data[dict_phone_pro[promotion_code]]['ref_code'] == str(promotion_code)
-def dict_data_output(phone,k=5):
-    dic_out={}
-    dic_out[phone] = {
-        'promotion_code': g_code(phone),
+    return dic_data
+
+
+def save_ref_code_in_data(numbers_phone, promotion_code,dic_data):
+    '''
+        SAVE REF_CODE in DATA
+    '''
+
+    dic_data[numbers_phone]['ref_code'] = str(promotion_code)
+
+    return dic_data
+
+def dict_data_output(numbers_phone,k=5):
+    '''
+        Dict return format std
+    '''
+
+    dic_out = {}
+    dic_out[numbers_phone] = {
+        'promotion_code': generate_code(numbers_phone),
         'entered numbers': k,
         'ref_code': None
     }
+
     return dic_out
+
+
 def dict_datas(list_data_input):
+    '''
+        return list dict multiple database
+    '''
     list_phones=[]
     list_dic=[]
     for i in list_data_input:
         list_phones.append(i['phone'])
+
     for i in list_phones:
         list_dic.append(dict_data_output(i))
+
     return list_dic
-def generate_user_code(list_input):
-    dictionary_agents = dict_datas(list_input)
+
+
+def generate_user_code(nodes):
+    '''
+        Generate user nodes in elder nodes
+    '''
+    dictionary_agents = dict_datas(nodes)
     for i in range(len(dictionary_agents)):
         for j in range(len(dictionary_agents)):
             try:
-                list_input[i].update(dictionary_agents[j][list_input[i]['phone']])
+                nodes[i].update(dictionary_agents[j][nodes[i]['phone']])
             except Exception as e:
                 warning(e)
                 continue
-    return list_input
+
+    return nodes
+
+# def test
+def testting():
+    node = {}
+    for i in ['0355197948', '0378972958', '0383868657']:
+        node.update(dict_data_output(str(i)))
+    print(f'nodes :{node}')
+    n = input('phone: ')
+    x = input('promotion_code: ')
+    new_nodes = input_refcode(n,x,node)
+    print(f'new nodes :{new_nodes}')
+    return True
