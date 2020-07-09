@@ -2,7 +2,7 @@
 
 import random
 from modelmock.generate_user import Main
-from modelmock.generate_code import generate_user_code
+from modelmock.Generate_Code import generate_user_code
 from modelmock.utils import (
   array_random_split,
   chunkify,
