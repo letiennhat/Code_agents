@@ -9,9 +9,9 @@ dict_promotion_phone = {}
     }
 '''
 
-def generate_code(numbers_phone):
+def generate_code(phone_numbers):
     '''
-        Generate code following one number phone
+        Generate code following one phone_numbers
     '''
 
     header_code = ['PC']
@@ -22,15 +22,15 @@ def generate_code(numbers_phone):
     promotion_code = ''.join(header_code)
     if promotion_code not in out_list_promotion_code:
         out_list_promotion_code.append(promotion_code)
-        dict_promotion_phone.update({promotion_code:numbers_phone})
+        dict_promotion_phone.update({promotion_code:phone_numbers})
 
         return promotion_code
     else:
 
-        return generate_code(numbers_phone)
+        return generate_code(phone_numbers)
 
 
-def input_refcode(numbers_phone, promotion_code, dic_data):
+def input_refcode(phone_numbers, promotion_code, dic_data):
     '''
         Enter REF-CODE - > SAVE in Data
     '''
@@ -38,10 +38,10 @@ def input_refcode(numbers_phone, promotion_code, dic_data):
     global dict_promotion_phone, out_list_promotion_code
 
     if promotion_code in out_list_promotion_code:
-        if promotion_code!=dic_data[numbers_phone]['promotion_code']:
+        if promotion_code!=dic_data[phone_numbers]['promotion_code']:
             k = dic_data[dict_promotion_phone[promotion_code]]['entered numbers']
             if k>=1 :
-                new_dic_data, key = save_ref_code_in_data(numbers_phone, promotion_code, dic_data)
+                new_dic_data, key = save_ref_code_in_data(phone_numbers, promotion_code, dic_data)
                 if key:
                     new_dic_data[dict_promotion_phone[promotion_code]]['entered numbers'] = int(k)-1
                     
@@ -56,27 +56,27 @@ def input_refcode(numbers_phone, promotion_code, dic_data):
     return dic_data
 
 
-def save_ref_code_in_data(numbers_phone, promotion_code, dic_data):
+def save_ref_code_in_data(phone_numbers, promotion_code, dic_data):
     '''
         SAVE REF_CODE in DATA
     '''
 
-    if dic_data[numbers_phone]['ref_code'] is None:
-        dic_data[numbers_phone]['ref_code'] = str(promotion_code)
+    if dic_data[phone_numbers]['ref_code'] is None:
+        dic_data[phone_numbers]['ref_code'] = str(promotion_code)
         warning("INPUT SUCCESSFULL")
         return dic_data,1
 
     warning("FAILED - YOUR REF-CODE EXISTS")
     return dic_data,0
 
-def dict_data_output(numbers_phone,k=5):
+def dict_data_output(phone_numbers, k=5):
     '''
         Dict return format std
     '''
 
     dic_out = {}
-    dic_out[numbers_phone] = {
-        'promotion_code': generate_code(numbers_phone),
+    dic_out[phone_numbers] = {
+        'promotion_code': generate_code(phone_numbers),
         'entered numbers': k,
         'ref_code': None
     }
