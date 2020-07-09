@@ -8,6 +8,7 @@ dict_promotion_phone = {}
         promotion_code : phone
     }
 '''
+
 def generate_code(numbers_phone):
     '''
         Generate code following one number phone
@@ -113,6 +114,7 @@ def generate_user_code(nodes):
 
     return nodes
 
+
 # def test
 def testting():
     node = {}
@@ -129,4 +131,6 @@ def testting():
     print(f'new nodes :{new_nodes_1}')
 
     return True
-testting()
+
+
+# testting()
